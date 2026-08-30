@@ -6,8 +6,29 @@ const REGISTRY = 'https://registry.npmjs.org';
 const DOWNLOADS = 'https://api.npmjs.org';
 const UA = 'vetpkg (+https://github.com/kiansaeidnia/vetpkg)';
 
-/** npm marks seized/malicious packages by transferring them to this user. */
-const SECURITY_HOLDER = 'npm';
+/**
+ * Detect a package npm has seized for security reasons.
+ *
+ * These markers were taken from a real seized package (`unused-imports`) rather
+ * than assumed. A held package looks like this:
+ *
+ *   maintainers:  []                          <- empty, NOT ["npm"]
+ *   repository:   "npm/security-holder"
+ *   description:  "security holding package"
+ *   version:      0.0.1-security
+ *
+ * An earlier version only checked for a sole maintainer named "npm", which
+ * never matches, so a known-malicious package scored "suspicious" instead of
+ * "blocked". Any one of these markers is definitive on its own.
+ */
+function detectSecurityHold({ maintainers, repoRaw, description, latestTag }) {
+  if (/npm\/security-holder/i.test(String(repoRaw || ''))) return true;
+  if (/^\s*security holding package\s*$/i.test(String(description || ''))) return true;
+  if (/-security$/.test(String(latestTag || ''))) return true;
+  // Legacy shape: transferred to a sole maintainer named "npm".
+  if (maintainers.length === 1 && maintainers[0] === 'npm') return true;
+  return false;
+}
 
 export async function fetchPackage(name, { fetchImpl = fetch } = {}) {
   const res = await fetchImpl(`${REGISTRY}/${encodeURIComponent(name).replace(/%40/, '@').replace(/%2F/g, '/')}`, {
@@ -34,8 +55,12 @@ export async function fetchPackage(name, { fetchImpl = fetch } = {}) {
     versionCount: versions.length,
     latestVersion: latestTag || null,
     maintainers,
-    // npm security-holds a package by making "npm" the sole maintainer.
-    securityHeld: maintainers.length === 1 && maintainers[0] === SECURITY_HOLDER,
+    securityHeld: detectSecurityHold({
+      maintainers,
+      repoRaw: typeof doc.repository === 'string' ? doc.repository : doc.repository?.url,
+      description: doc.description,
+      latestTag
+    }),
     deprecated: Boolean(latest?.deprecated),
     deprecatedReason: typeof latest?.deprecated === 'string' ? latest.deprecated : null,
     repository: normalizeRepo(doc.repository || latest?.repository),

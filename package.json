@@ -1,6 +1,6 @@
 {
   "name": "vetpkg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Catch hallucinated and squatted packages before an AI agent installs them. MCP server + CLI, zero dependencies.",
   "type": "module",
   "license": "MIT",
@@ -36,8 +36,16 @@
   ],
   "scripts": {
     "seed": "node scripts/build-popular.mjs",
-    "test": "node --test test/similarity.test.js test/score.test.js test/corpus-index.test.js",
+    "test": "node --test test/similarity.test.js test/score.test.js test/corpus-index.test.js test/registry.test.js",
     "test:live": "node scripts/live-check.mjs",
     "test:perf": "node scripts/perf.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kiansaeidnia/vetpkg.git"
+  },
+  "homepage": "https://github.com/kiansaeidnia/vetpkg#readme",
+  "bugs": {
+    "url": "https://github.com/kiansaeidnia/vetpkg/issues"
   }
 }
