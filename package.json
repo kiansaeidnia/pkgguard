@@ -10,8 +10,8 @@
     "./mcp": "./src/mcp.js"
   },
   "bin": {
-    "pkgguard": "./bin/pkgguard.js",
-    "pkgguard-mcp": "./bin/pkgguard-mcp.js"
+    "pkgguard": "bin/pkgguard.js",
+    "pkgguard-mcp": "bin/pkgguard-mcp.js"
   },
   "files": [
     "src",

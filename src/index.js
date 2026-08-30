@@ -75,13 +75,16 @@ export async function checkPackage(name, opts = {}) {
   }
 
   const downloads = await fetchDownloads(clean, { fetchImpl });
-  const result = scorePackage(meta, downloads, similar);
+  const { established, ...result } = scorePackage(meta, downloads, similar);
 
   return {
     name: clean,
     registry,
     ...result,
-    similar,
+    // Similarity is suppressed for established packages. It did not influence
+    // the verdict for them, and reporting that "express" resembles "cypress"
+    // reads as a warning when it is not one.
+    similar: established ? [] : similar,
     meta: {
       description: meta.description,
       created: meta.created,

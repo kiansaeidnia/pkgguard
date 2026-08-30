@@ -128,7 +128,7 @@ export function scorePackage(meta, downloads, similar = []) {
 
   const verdict = risk >= 55 ? 'suspicious' : risk >= 28 ? 'caution' : 'trusted';
 
-  return { verdict, risk, reasons, recommendation: recommend(verdict, top, meta) };
+  return { verdict, risk, reasons, established, recommendation: recommend(verdict, top, meta) };
 }
 
 function recommend(verdict, top, meta) {
