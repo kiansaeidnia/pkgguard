@@ -1,0 +1,43 @@
+{
+  "name": "pkgguard",
+  "version": "0.1.0",
+  "description": "Catch hallucinated and squatted packages before an AI agent installs them. MCP server + CLI, zero dependencies.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./mcp": "./src/mcp.js"
+  },
+  "bin": {
+    "pkgguard": "./bin/pkgguard.js",
+    "pkgguard-mcp": "./bin/pkgguard-mcp.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "slopsquatting",
+    "supply-chain",
+    "supply-chain-security",
+    "npm",
+    "mcp",
+    "mcp-server",
+    "ai-agent",
+    "security",
+    "hallucination",
+    "typosquatting",
+    "dependency-check"
+  ],
+  "scripts": {
+    "seed": "node scripts/build-popular.mjs",
+    "test": "node --test test/similarity.test.js test/score.test.js test/corpus-index.test.js",
+    "test:live": "node scripts/live-check.mjs",
+    "test:perf": "node scripts/perf.mjs"
+  }
+}
