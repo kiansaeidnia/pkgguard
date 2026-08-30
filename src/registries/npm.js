@@ -4,7 +4,7 @@
 
 const REGISTRY = 'https://registry.npmjs.org';
 const DOWNLOADS = 'https://api.npmjs.org';
-const UA = 'pkgguard (+https://github.com/kiansaeidnia/pkgguard)';
+const UA = 'vetpkg (+https://github.com/kiansaeidnia/vetpkg)';
 
 /** npm marks seized/malicious packages by transferring them to this user. */
 const SECURITY_HOLDER = 'npm';

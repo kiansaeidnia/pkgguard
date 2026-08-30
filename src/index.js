@@ -1,4 +1,4 @@
-// pkgguard — public API.
+// vetpkg — public API.
 //
 // checkPackage("some-name") -> verdict, risk score, human-readable reasons.
 // Designed to be called by an AI coding agent *before* it installs anything.

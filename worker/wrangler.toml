@@ -1,4 +1,4 @@
-name = "pkgguard"
+name = "vetpkg"
 main = "worker.js"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
@@ -9,8 +9,3 @@ compatibility_flags = ["nodejs_compat"]
 
 [observability]
 enabled = true
-
-[[d1_databases]]
-binding = "DB"
-database_name = "pkgguard"
-database_id = "77765d01-b225-4391-b05b-022229f59df3"

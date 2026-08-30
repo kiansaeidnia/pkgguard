@@ -1,4 +1,4 @@
-// pkgguard hosted API — Cloudflare Worker.
+// vetpkg hosted API — Cloudflare Worker.
 //
 // The free npm package ships a corpus snapshot. This service exists to sell what
 // a local package structurally cannot: a corpus that stays current, plus
@@ -24,7 +24,7 @@ const json = (body, status = 200, extra = {}) =>
     headers: { 'content-type': 'application/json; charset=utf-8', ...CORS, ...extra }
   });
 
-const LANDING = `pkgguard — hosted API
+const LANDING = `vetpkg — hosted API
 
 Catch hallucinated and squatted packages before an AI agent installs them.
 
@@ -33,12 +33,12 @@ Catch hallucinated and squatted packages before an AI agent installs them.
   GET /health                         service status
 
 Example:
-  curl "https://pkgguard.kiansaeidnia.workers.dev/v1/check?name=unused-imports"
+  curl "https://vetpkg.kiansaeidnia.workers.dev/v1/check?name=unused-imports"
 
 The free npm package does the same checks locally:
-  npx pkgguard unused-imports
+  npx vetpkg unused-imports
 
-Source: https://github.com/kiansaeidnia/pkgguard
+Source: https://github.com/kiansaeidnia/vetpkg
 `;
 
 export default {
@@ -56,7 +56,7 @@ export default {
     }
 
     if (url.pathname === '/health') {
-      return json({ ok: true, service: 'pkgguard', version: '0.1.0' });
+      return json({ ok: true, service: 'vetpkg', version: '0.1.0' });
     }
 
     if (url.pathname === '/v1/check') {

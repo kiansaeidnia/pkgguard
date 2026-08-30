@@ -103,7 +103,7 @@ async function search(topic) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { 'user-agent': 'pkgguard-seed/0.5', accept: 'application/json' },
+        headers: { 'user-agent': 'vetpkg-seed/0.5', accept: 'application/json' },
         signal: AbortSignal.timeout(15_000)
       });
       const text = await res.text();

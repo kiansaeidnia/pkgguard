@@ -12,7 +12,7 @@ import { createInterface } from 'node:readline';
 import { checkPackage, checkPackages } from './index.js';
 
 const PROTOCOL_VERSION = '2024-11-05';
-const SERVER_INFO = { name: 'pkgguard', version: '0.1.0' };
+const SERVER_INFO = { name: 'vetpkg', version: '0.1.0' };
 
 const TOOLS = [
   {
@@ -156,7 +156,7 @@ async function handle(msg) {
       } catch (err) {
         // Tool errors are reported in-band so the model can react, per MCP.
         return reply(id, {
-          content: [{ type: 'text', text: `pkgguard error: ${err?.message || err}` }],
+          content: [{ type: 'text', text: `vetpkg error: ${err?.message || err}` }],
           isError: true
         });
       }

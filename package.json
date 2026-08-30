@@ -1,5 +1,5 @@
 {
-  "name": "pkgguard",
+  "name": "vetpkg",
   "version": "0.1.0",
   "description": "Catch hallucinated and squatted packages before an AI agent installs them. MCP server + CLI, zero dependencies.",
   "type": "module",
@@ -10,8 +10,8 @@
     "./mcp": "./src/mcp.js"
   },
   "bin": {
-    "pkgguard": "bin/pkgguard.js",
-    "pkgguard-mcp": "bin/pkgguard-mcp.js"
+    "vetpkg": "bin/vetpkg.js",
+    "vetpkg-mcp": "bin/vetpkg-mcp.js"
   },
   "files": [
     "src",

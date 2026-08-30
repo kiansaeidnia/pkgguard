@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// pkgguard CLI.
+// vetpkg CLI.
 //
-//   pkgguard express react              check named packages
-//   pkgguard scan                       check every dependency in ./package.json
-//   pkgguard scan --prod                skip devDependencies
-//   pkgguard express --json             machine-readable output
+//   vetpkg express react              check named packages
+//   vetpkg scan                       check every dependency in ./package.json
+//   vetpkg scan --prod                skip devDependencies
+//   vetpkg express --json             machine-readable output
 //
 // Exit code is 1 when anything is suspicious, blocked, or missing, so this can
 // gate a CI job or a pre-install hook.
@@ -41,10 +41,10 @@ const BADGE = {
 
 function usage() {
   console.log(`
-${C.bold('pkgguard')} — catch hallucinated and squatted packages before you install them
+${C.bold('vetpkg')} — catch hallucinated and squatted packages before you install them
 
-  ${C.bold('pkgguard')} <package...>     check one or more npm packages
-  ${C.bold('pkgguard')} scan             check every dependency in ./package.json
+  ${C.bold('vetpkg')} <package...>     check one or more npm packages
+  ${C.bold('vetpkg')} scan             check every dependency in ./package.json
 
   ${C.dim('--prod')}       scan only dependencies, not devDependencies
   ${C.dim('--json')}       output JSON

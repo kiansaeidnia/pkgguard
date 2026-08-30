@@ -1,11 +1,11 @@
-# pkgguard
+# vetpkg
 
 **Stop AI coding agents installing packages that don't exist.**
 
 Zero dependencies. Works as an MCP server, a CLI, or a library.
 
 ```bash
-npx pkgguard express-async-router-utils-pro
+npx vetpkg express-async-router-utils-pro
 ```
 ```
  none  express-async-router-utils-pro         risk 100
@@ -34,7 +34,7 @@ This is not hypothetical. `unused-imports` is the textbook case: models hallucin
 
 Meanwhile **over 50% of organisations have already had an outage or security incident from AI-generated code using outdated or wrong APIs** (Snyk). Models are trained infrequently — a model shipped this summer can be confidently wrong about a library that changed a year ago.
 
-## What pkgguard does
+## What vetpkg does
 
 It answers one question, before anything gets installed:
 
@@ -75,9 +75,9 @@ This is the point. A CLI only helps if you remember to run it. An **MCP server s
 ```json
 {
   "mcpServers": {
-    "pkgguard": {
+    "vetpkg": {
       "command": "npx",
-      "args": ["-y", "pkgguard", "pkgguard-mcp"]
+      "args": ["-y", "vetpkg", "vetpkg-mcp"]
     }
   }
 }
@@ -88,7 +88,7 @@ This is the point. A CLI only helps if you remember to run it. An **MCP server s
 ```json
 {
   "mcpServers": {
-    "pkgguard": { "command": "npx", "args": ["-y", "pkgguard", "pkgguard-mcp"] }
+    "vetpkg": { "command": "npx", "args": ["-y", "vetpkg", "vetpkg-mcp"] }
   }
 }
 ```
@@ -98,34 +98,34 @@ Two tools are exposed:
 - `check_package` — verify one package
 - `check_packages` — verify several at once
 
-Then tell your agent, once: *"Always check packages with pkgguard before installing them."*
+Then tell your agent, once: *"Always check packages with vetpkg before installing them."*
 
 ## Use it as a CLI
 
 ```bash
 # check specific packages
-npx pkgguard express react lodash
+npx vetpkg express react lodash
 
 # check everything in package.json
-npx pkgguard scan
+npx vetpkg scan
 
 # production dependencies only
-npx pkgguard scan --prod
+npx vetpkg scan --prod
 
 # machine-readable
-npx pkgguard express --json
+npx vetpkg express --json
 ```
 
 Exits non-zero if anything is suspicious, blocked, or missing — so it works as a CI gate or a pre-install hook:
 
 ```json
-{ "scripts": { "preinstall": "pkgguard scan || true" } }
+{ "scripts": { "preinstall": "vetpkg scan || true" } }
 ```
 
 ## Use it as a library
 
 ```js
-import { checkPackage } from 'pkgguard';
+import { checkPackage } from 'vetpkg';
 
 const result = await checkPackage('unused-imports');
 
@@ -139,7 +139,7 @@ result.similar;         // closest real packages, if any
 ## FAQ
 
 **Does this replace `npm audit` or Socket?**
-No, and it isn't trying to. `npm audit` finds known vulnerabilities in packages you already trust. pkgguard asks whether the package should be trusted *at all* — whether it's real, and whether it's what you meant. Run both.
+No, and it isn't trying to. `npm audit` finds known vulnerabilities in packages you already trust. vetpkg asks whether the package should be trusted *at all* — whether it's real, and whether it's what you meant. Run both.
 
 **Why not just check if the package exists?**
 Because the dangerous case is that it *does* exist. Once an attacker registers a hallucinated name, an existence check passes and hands you the payload. Existence is the easy half.
