@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kiansaeidnia/vetpkg",
+  "description": "Catch hallucinated and slopsquatted npm packages before an AI agent installs them. Checks whether a package is real and established, or invented by a model.",
+  "repository": {
+    "url": "https://github.com/kiansaeidnia/vetpkg",
+    "source": "github"
+  },
+  "version": "0.1.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "vetpkg",
+      "version": "0.1.2",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

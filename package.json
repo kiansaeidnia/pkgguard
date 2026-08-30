@@ -1,6 +1,7 @@
 {
   "name": "vetpkg",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "mcpName": "io.github.kiansaeidnia/vetpkg",
   "description": "Catch hallucinated and squatted packages before an AI agent installs them. MCP server + CLI, zero dependencies.",
   "type": "module",
   "license": "MIT",
@@ -16,7 +17,8 @@
   "files": [
     "src",
     "bin",
-    "README.md"
+    "README.md",
+    "server.json"
   ],
   "engines": {
     "node": ">=18"

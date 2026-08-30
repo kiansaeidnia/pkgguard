@@ -1,0 +1,63 @@
+name: Release
+
+# Push a version tag and everything ships itself:
+#   npm  -> via trusted publishing (OIDC), no stored token
+#   MCP  -> via mcp-publisher with GitHub OIDC, no stored token
+#
+# Neither step uses a secret. npm is retiring 2FA-bypass tokens (sensitive
+# account actions blocked from Aug 2026, direct publishing from ~Jan 2027), so a
+# stored publish token would have been a dead end anyway.
+#
+#   git tag v0.1.2 && git push origin v0.1.2
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required by BOTH npm trusted publishing and mcp-publisher
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1; setup-node ships an older one.
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Run tests
+        run: npm test
+
+      # --- npm -----------------------------------------------------------
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+
+      # --- MCP Registry ---------------------------------------------------
+      # The registry only stores metadata; it verifies the published npm package
+      # carries a matching `mcpName`. Publishing to npm must therefore come
+      # first, which is why both live in one job.
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Sync server.json version to the tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > server.tmp
+          mv server.tmp server.json
+          cat server.json
+
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish
