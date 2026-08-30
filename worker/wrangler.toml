@@ -1,0 +1,16 @@
+name = "pkgguard"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+# The corpus index is built once at isolate startup rather than per request.
+# Startup gets a far larger CPU budget than the 10ms per-request limit, which is
+# what keeps this inside the free tier.
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pkgguard"
+database_id = "77765d01-b225-4391-b05b-022229f59df3"

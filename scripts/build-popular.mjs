@@ -74,9 +74,24 @@ const BASE = [
 const SPACING_MS = 600;
 const MAX_RETRIES = 5;
 const CACHE = join(__dirname, '.seed-cache.json');
-const seen = new Map(Object.entries(
-  existsSync(CACHE) ? JSON.parse(readFileSync(CACHE, 'utf8')) : {}
-));
+// The cache is versioned because the stored value changed meaning: it used to
+// hold npm's popularity score (0-1) and now holds weekly download counts.
+// Merging the two silently inverted the ranking - ts-remove-unused-imports
+// (166/wk) outranked eslint-plugin-unused-imports (9.5M/wk) - and that corpus
+// reached production. A cache from a different schema is discarded, not merged.
+const CACHE_SCHEMA = 'weekly-downloads-v1';
+function loadCache() {
+  if (!existsSync(CACHE)) return [];
+  try {
+    const raw = JSON.parse(readFileSync(CACHE, 'utf8'));
+    if (raw && raw.schema === CACHE_SCHEMA && raw.data) return Object.entries(raw.data);
+    console.log('  (discarding cache from an older schema)');
+  } catch { /* unreadable cache is no cache */ }
+  return [];
+}
+const seen = new Map(loadCache());
+const saveCache = () =>
+  writeFileSync(CACHE, JSON.stringify({ schema: CACHE_SCHEMA, data: Object.fromEntries(seen) }));
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 let rateLimitWaits = 0;
@@ -144,7 +159,7 @@ async function sweep(topic) {
   if (completed % 20 === 0) {
     process.stdout.write(`  ${completed}/${BASE.length} · ${seen.size} names · ${rateLimitWaits} waits\n`);
     // Checkpoint: an interrupted sweep resumes from here instead of restarting.
-    writeFileSync(CACHE, JSON.stringify(Object.fromEntries(seen)));
+    saveCache();
   }
   await sleep(SPACING_MS);
 }
@@ -169,6 +184,24 @@ const ranked = [...seen.entries()]
   .filter(([, weekly]) => weekly >= MIN_WEEKLY)
   .sort((a, b) => b[1] - a[1])
   .map(([name]) => name);
+
+// Sanity gate. A corpus is only useful if its ordering reflects real usage, and
+// a silently mis-ranked one already shipped once. These must hold or nothing is
+// written.
+const problems = [];
+const rankOf = (n) => ranked.indexOf(n);
+for (const [name, ceiling] of [['express', 2000], ['react', 2000], ['lodash', 2000],
+                               ['eslint-plugin-unused-imports', 8000]]) {
+  const r = rankOf(name);
+  if (r === -1) problems.push(`${name} is missing from the corpus`);
+  else if (r > ceiling) problems.push(`${name} ranked ${r}, expected better than ${ceiling}`);
+}
+if (problems.length) {
+  console.error('\nCORPUS REJECTED — ranking looks wrong:');
+  for (const p of problems) console.error('  - ' + p);
+  console.error('\nNothing was written. Delete scripts/.seed-cache.json and re-run.');
+  process.exit(1);
+}
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(ranked, null, 0));
